@@ -9,7 +9,7 @@ namespace DroneDelivery.Data.Data
         {
 
         }
-
+              
         public DbSet<Drone>   Drones { get; set; }
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<Intinerario> Intinerarios { get; set; }

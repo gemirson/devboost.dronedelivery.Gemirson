@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DroneDelivery.Application.Helpers;
 using DroneDelivery.Application.Interfaces;
 using DroneDelivery.Application.Models;
 using DroneDelivery.Data.Repositorios.IRepository;
@@ -15,11 +16,13 @@ namespace DroneDelivery.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly Application_Helpers application_Helpers;
 
         public PedidoService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            application_Helpers = new Application_Helpers(unitOfWork);
         }
 
         public IMapper Mapper { get; }
@@ -38,32 +41,15 @@ namespace DroneDelivery.Application.Services
 
             var drones = await _unitOfWork.Drones.ObterAsync();
 
-            foreach (var drone in drones)
-            {
-                var droneTemAutonomia = pedido.ValidarDistanciaEntrega(Utility.Utils.LATITUDE_INICIAL, Utility.Utils.LONGITUDE_INICIAL, drone.Velocidade, drone.Autonomia);
+            ///-------------------------------Get drone------------------------------////
 
-                var droneAceitaPeso = drone.VerificarDroneAceitaOPesoPedido(pedido.Peso);
+            droneDisponivel  = await application_Helpers.DroneDisponivel(pedido, drones);
 
-                if (!droneTemAutonomia || !droneAceitaPeso)
-                    continue;
+            intinerario = await application_Helpers.GetIntinerarioAsync(pedido, drones);
 
-                intinerario = await _unitOfWork.Intinerarios.ObterAsync(drone.Id);
-                  
+            RestanteAutonomia = Application_Helpers.AutonomiaRestanteDrone(pedido, drones);
 
-                if (drone.Status == DroneStatus.Livre) {
-                    RestanteAutonomia = pedido.RestanteAutonomia(Utility.Utils.LATITUDE_INICIAL, Utility.Utils.LONGITUDE_INICIAL, drone.Velocidade, drone.Autonomia);
-                    droneDisponivel = drone;
-                    break;
-                }
-
-               if ((drone.Status == DroneStatus.EmAguardandoNovo) && pedido.RestantePeso(intinerario.PesoAtual) && drone.TraceRotaDrone(new Localizacao(pedido.Latitude, pedido.Longitude), new Localizacao(intinerario.Latitude, intinerario.Longitude), intinerario.AutonomiaAtual) && intinerario !=null
-                    )
-                {
-                    droneDisponivel = drone;
-                    break;
-                }
-            }
-
+           
             if (droneDisponivel == null)
             {
                 pedido.AtualizarStatusPedido(PedidoStatus.AguardandoEntrega);
@@ -71,7 +57,7 @@ namespace DroneDelivery.Application.Services
             }
             else
             {
-                pedido.DroneId = droneDisponivel.Id;
+                pedido.Drone = droneDisponivel;
                 pedido.AtualizarStatusPedido(PedidoStatus.EmEntrega);
                 droneDisponivel.AtualizarStatusDrone(droneDisponivel.Status == DroneStatus.Livre ? DroneStatus.EmAguardandoNovo: DroneStatus.EmCheckout);
 
@@ -100,7 +86,6 @@ namespace DroneDelivery.Application.Services
         public async Task<IEnumerable<PedidoModel>> ObterAsync()
         {
             var pedidos = await _unitOfWork.Pedidos.ObterAsync();
-
             return _mapper.Map<IEnumerable<Pedido>, IEnumerable<PedidoModel>>(pedidos);
         }
 

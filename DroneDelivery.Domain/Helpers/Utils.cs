@@ -20,5 +20,8 @@ namespace DroneDelivery.Domain.Helpers
 
             return false;
         }
+
+       
+        
     }
 }

@@ -61,7 +61,7 @@ namespace DroneDelivery.Application.Services
                 droneDisponivel.AtualizarStatusDrone(droneDisponivel.Status == DroneStatus.Livre ? DroneStatus.EmAguardandoNovo: DroneStatus.EmCheckout);
 
                 await  application_Helpers.GerenciarIntinerario(droneDisponivel, intinerario, pedido, RestanteAutonomia);
-                               
+                           
 
             }
                                

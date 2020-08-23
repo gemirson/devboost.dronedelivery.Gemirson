@@ -31,9 +31,10 @@ namespace DroneDelivery.Api.Controllers
         /// <remarks>
         /// Sample request:
         ///
+        ///     peso: [g]
         ///     POST /pedido
         ///     {
-        ///        "peso": 10,
+        ///        "peso": 10,  
         ///        "latitude": -23.5753639,
         ///        "longitude": -46.692417
         ///     }

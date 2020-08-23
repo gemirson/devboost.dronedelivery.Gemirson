@@ -21,10 +21,10 @@ namespace DroneDelivery.Data.Repositorios
             await _context.SaveChangesAsync();
         }
 
-        public async Task Atualizar(Intinerario intinerario)
+        public async Task AtualizarAsync(Intinerario intinerario)
         {
             _context.Entry(intinerario).State = EntityState.Modified;
-            _context.SaveChanges() ;
+             await  _context.SaveChangesAsync() ;
            
         }
 

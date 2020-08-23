@@ -67,6 +67,7 @@ namespace DroneDelivery.Application.Services
             if (droneDisponivel == null)
             {
                 pedido.AtualizarStatusPedido(PedidoStatus.AguardandoEntrega);
+                
             }
             else
             {
@@ -81,7 +82,7 @@ namespace DroneDelivery.Application.Services
                     intinerario.PesoAtual += pedido.Peso;
                     intinerario.Latitude = pedido.Latitude;
                     intinerario.Longitude = pedido.Longitude;
-                    await _unitOfWork.Intinerarios.Atualizar(intinerario);
+                    await _unitOfWork.Intinerarios.AtualizarAsync(intinerario);
 
                 }
                 else

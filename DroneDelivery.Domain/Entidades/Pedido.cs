@@ -39,7 +39,7 @@ namespace DroneDelivery.Domain.Entidades
 
         public bool ValidarPesoPedido(double carga)
         {
-            return Peso < carga;
+            return Peso*0.001 < carga;
         }
 
         public bool ValidarDistanciaEntrega(double latitudeInicial, double longitudeInicial, double velocidadeDrone, double autonomiaDrone)

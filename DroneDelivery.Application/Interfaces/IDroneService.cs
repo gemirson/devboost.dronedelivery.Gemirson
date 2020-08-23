@@ -19,5 +19,7 @@ namespace DroneDelivery.Application.Interfaces
         Task RemoverAsync(Guid id);
         Task Remover(DroneModel drone);
 
+        Task AtualizarDrone();
+
     }
 }

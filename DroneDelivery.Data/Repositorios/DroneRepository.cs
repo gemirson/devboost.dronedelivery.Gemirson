@@ -49,6 +49,12 @@ namespace DroneDelivery.Data.Repositorios
             _context.Remove(drone);
         }
 
+        public async Task AtualizaraAsync(Drone drone)
+        {
+                 _context.Entry(drone).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
 
+            
+        }
     }
 }

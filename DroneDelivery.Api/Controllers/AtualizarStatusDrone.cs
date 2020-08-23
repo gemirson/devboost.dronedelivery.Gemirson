@@ -1,7 +1,5 @@
 ﻿using DroneDelivery.Application.Interfaces;
-using DroneDelivery.Application.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DroneDelivery.Api.Controllers
@@ -16,11 +14,16 @@ namespace DroneDelivery.Api.Controllers
         {
             _droneService = droneService;
         }
-
+               
+        /// <summary>
+        /// Liberar todos os drones em Checkout e AguardandoNovo
+        /// </summary>
+        /// <remarks>
         [HttpGet]
-        public async Task<IEnumerable<DroneModel>> Atualizar()
+        public async Task<IActionResult> Atualizar()
         {
-            return await _droneService.ObterAsync();
+            await _droneService.AtualizarDrone();
+            return Ok();
         }
 
        

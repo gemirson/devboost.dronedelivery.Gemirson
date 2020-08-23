@@ -64,6 +64,19 @@ namespace DroneDelivery.Application.Services
             await _unitOfWork.SaveAsync();
         }
 
+        public async Task AtualizarDrone()
+        {
+            var drones = await _unitOfWork.Drones.ObterAsync();
 
+            foreach (var drone in drones)
+            {
+                if((drone.Status== Domain.Enum.DroneStatus.EmAguardandoNovo) ||(drone.Status == Domain.Enum.DroneStatus.EmCheckout))
+                {
+                    drone.Status = Domain.Enum.DroneStatus.EmEntrega;
+                    await _unitOfWork.Drones.AtualizaraAsync(drone);
+
+                }
+            }
+        }
     }
 }

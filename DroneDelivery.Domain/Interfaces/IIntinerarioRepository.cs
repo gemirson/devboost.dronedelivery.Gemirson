@@ -10,6 +10,6 @@ namespace DroneDelivery.Domain.Interfaces
     {
         Task AdicionarAsync(Intinerario intinerario);
         Task<Intinerario> ObterAsync(Guid id);
-        Task Atualizar(Intinerario intinerario);
+        Task AtualizarAsync(Intinerario intinerario);
     }
 }

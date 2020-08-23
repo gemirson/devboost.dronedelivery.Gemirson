@@ -16,5 +16,6 @@ namespace DroneDelivery.Domain.Interfaces
         Task RemoverAsync(Guid id);
         void Remover(Drone drone);
 
+        Task AtualizaraAsync(Drone drone);
     }
 }

@@ -93,5 +93,24 @@ namespace DroneDelivery.Application.Helpers
 
             return intinerario;
         }
+
+        public async Task GerenciarIntinerario(Drone drone, Intinerario intinerario, Pedido pedido,double autonomia) {
+
+            if ((drone.Status == DroneStatus.EmAguardandoNovo || drone.Status == DroneStatus.EmCheckout) && intinerario != null)
+            {
+                intinerario.AutonomiaAtual += autonomia;
+                intinerario.IdDrone = drone.Id;
+                intinerario.PesoAtual += pedido.Peso;
+                intinerario.Latitude = pedido.Latitude;
+                intinerario.Longitude = pedido.Longitude;
+                await _unitOfWork.Intinerarios.AtualizarAsync(intinerario);
+            
+            }
+            else
+            {
+                await _unitOfWork.Intinerarios.AdicionarAsync(new Intinerario(drone.Id, pedido.Peso, autonomia, pedido.Latitude, pedido.Longitude));
+            }
+
+        }
     }
 }

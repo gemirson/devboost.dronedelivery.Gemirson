@@ -61,20 +61,8 @@ namespace DroneDelivery.Application.Services
                 pedido.AtualizarStatusPedido(PedidoStatus.EmEntrega);
                 droneDisponivel.AtualizarStatusDrone(droneDisponivel.Status == DroneStatus.Livre ? DroneStatus.EmAguardandoNovo: DroneStatus.EmCheckout);
 
-                if ((droneDisponivel.Status == DroneStatus.EmAguardandoNovo || droneDisponivel.Status == DroneStatus.EmCheckout) && intinerario != null)
-                {
-                    intinerario.AutonomiaAtual += RestanteAutonomia;
-                    intinerario.IdDrone = droneDisponivel.Id;
-                    intinerario.PesoAtual += pedido.Peso;
-                    intinerario.Latitude = pedido.Latitude;
-                    intinerario.Longitude = pedido.Longitude;
-                    await _unitOfWork.Intinerarios.AtualizarAsync(intinerario);
-
-                }
-                else
-                {
-                    await _unitOfWork.Intinerarios.AdicionarAsync(new Intinerario(droneDisponivel.Id, pedido.Peso, RestanteAutonomia, pedido.Latitude, pedido.Longitude));
-                }
+                await  application_Helpers.GerenciarIntinerario(droneDisponivel, intinerario, pedido, RestanteAutonomia);
+                               
 
             }
                                

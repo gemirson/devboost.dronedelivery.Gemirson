@@ -1,5 +1,6 @@
 ﻿using DroneDelivery.Domain.Core;
 using DroneDelivery.Domain.Enum;
+using DroneDelivery.Domain.Helpers;
 using Geolocation;
 using System;
 
@@ -44,14 +45,8 @@ namespace DroneDelivery.Domain.Entidades
 
         public bool ValidarDistanciaEntrega(double latitudeInicial, double longitudeInicial, double velocidadeDrone, double autonomiaDrone)
         {
-            double distance = GeoCalculator.GetDistance(latitudeInicial, longitudeInicial, Latitude, Longitude, 1, DistanceUnit.Meters);
-            if (distance <= 0)
-                return false;
-
-            //velocidade em m/s
-            //T = d / v
-            var tempoEmMinutos = ((distance * 2) / velocidadeDrone) / 60;
-
+            double tempoEmMinutos = Helper_Utils.TempoDeslocamento(latitudeInicial, longitudeInicial, Latitude, Longitude,velocidadeDrone);
+                      
             if (tempoEmMinutos > autonomiaDrone)
                 return false;
 
@@ -61,17 +56,13 @@ namespace DroneDelivery.Domain.Entidades
 
         public double RestanteAutonomia(double latitudeInicial, double longitudeInicial, double velocidadeDrone, double autonomiaDrone)
         {
-            double distance = GeoCalculator.GetDistance(latitudeInicial, longitudeInicial, Latitude, Longitude, 1, DistanceUnit.Meters);
-            if (distance <= 0)
-                return 0;
-           
-            distance = autonomiaDrone -(((distance * 2) / velocidadeDrone) / 60);
+            double tempoEmMinutos = Helper_Utils.TempoDeslocamento(latitudeInicial, longitudeInicial, Latitude, Longitude, velocidadeDrone);
 
-            if (distance > autonomiaDrone)
+            tempoEmMinutos = autonomiaDrone - tempoEmMinutos;
+
+            if (tempoEmMinutos > autonomiaDrone)
                 return autonomiaDrone;
-
-            return distance;
-
+            return tempoEmMinutos;
                    
         }
 

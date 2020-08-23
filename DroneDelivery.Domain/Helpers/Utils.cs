@@ -1,8 +1,6 @@
 ﻿using DroneDelivery.Domain.Entidades;
 using DroneDelivery.Domain.Enum;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Geolocation;
 
 namespace DroneDelivery.Domain.Helpers
 {
@@ -21,7 +19,18 @@ namespace DroneDelivery.Domain.Helpers
             return false;
         }
 
-       
-        
+        public static double TempoDeslocamento(double latitudeInicial, double longitudeInicial, double latitudeFinal,double longitudeFinal, double velocidadeDrone) 
+       {
+            double distance = GeoCalculator.GetDistance(latitudeInicial, longitudeInicial, latitudeFinal, longitudeFinal, 1, DistanceUnit.Meters);
+            if (distance <= 0)
+                return 0;
+
+            //velocidade em m/s
+            //T = d / v
+
+             return (((distance * 2) / velocidadeDrone) / 60);
+
+
+        }
     }
 }

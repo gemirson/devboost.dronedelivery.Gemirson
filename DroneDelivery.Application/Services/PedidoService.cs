@@ -5,7 +5,6 @@ using DroneDelivery.Application.Models;
 using DroneDelivery.Data.Repositorios.IRepository;
 using DroneDelivery.Domain.Entidades;
 using DroneDelivery.Domain.Enum;
-using DroneDelivery.Domain.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

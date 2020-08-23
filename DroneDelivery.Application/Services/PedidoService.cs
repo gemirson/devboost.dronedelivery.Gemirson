@@ -4,6 +4,7 @@ using DroneDelivery.Application.Models;
 using DroneDelivery.Data.Repositorios.IRepository;
 using DroneDelivery.Domain.Entidades;
 using DroneDelivery.Domain.Enum;
+using DroneDelivery.Domain.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -32,19 +33,31 @@ namespace DroneDelivery.Application.Services
 
             // temos que procurar drones disponiveis
             Drone droneDisponivel = null;
+            Intinerario intinerario = null;
+            double RestanteAutonomia = 0;
 
             var drones = await _unitOfWork.Drones.ObterAsync();
+
             foreach (var drone in drones)
             {
                 var droneTemAutonomia = pedido.ValidarDistanciaEntrega(Utility.Utils.LATITUDE_INICIAL, Utility.Utils.LONGITUDE_INICIAL, drone.Velocidade, drone.Autonomia);
-                if (!droneTemAutonomia)
-                    return false;
 
                 var droneAceitaPeso = drone.VerificarDroneAceitaOPesoPedido(pedido.Peso);
-                if (!droneAceitaPeso)
-                    return false;
 
-                if (drone.Status == DroneStatus.Livre)
+                if (!droneTemAutonomia || !droneAceitaPeso)
+                    continue;
+
+                intinerario = await _unitOfWork.Intinerarios.ObterAsync(drone.Id);
+                  
+
+                if (drone.Status == DroneStatus.Livre) {
+                    RestanteAutonomia = pedido.RestanteAutonomia(Utility.Utils.LATITUDE_INICIAL, Utility.Utils.LONGITUDE_INICIAL, drone.Velocidade, drone.Autonomia);
+                    droneDisponivel = drone;
+                    break;
+                }
+
+               if ((drone.Status == DroneStatus.EmAguardandoNovo) && pedido.RestantePeso(intinerario.PesoAtual) && drone.TraceRotaDrone(new Localizacao(pedido.Latitude, pedido.Longitude), new Localizacao(intinerario.Latitude, intinerario.Longitude), intinerario.AutonomiaAtual) && intinerario !=null
+                    )
                 {
                     droneDisponivel = drone;
                     break;
@@ -59,12 +72,27 @@ namespace DroneDelivery.Application.Services
             {
                 pedido.DroneId = droneDisponivel.Id;
                 pedido.AtualizarStatusPedido(PedidoStatus.EmEntrega);
-                droneDisponivel.AtualizarStatusDrone(DroneStatus.EmEntrega);
-            }
+                droneDisponivel.AtualizarStatusDrone(droneDisponivel.Status == DroneStatus.Livre ? DroneStatus.EmAguardandoNovo: DroneStatus.EmCheckout);
 
+                if ((droneDisponivel.Status == DroneStatus.EmAguardandoNovo || droneDisponivel.Status == DroneStatus.EmCheckout) && intinerario != null)
+                {
+                    intinerario.AutonomiaAtual += RestanteAutonomia;
+                    intinerario.IdDrone = droneDisponivel.Id;
+                    intinerario.PesoAtual += pedido.Peso;
+                    intinerario.Latitude = pedido.Latitude;
+                    intinerario.Longitude = pedido.Longitude;
+                    await _unitOfWork.Intinerarios.Atualizar(intinerario);
+
+                }
+                else
+                {
+                    await _unitOfWork.Intinerarios.AdicionarAsync(new Intinerario(droneDisponivel.Id, pedido.Peso, RestanteAutonomia, pedido.Latitude, pedido.Longitude));
+                }
+
+            }
+                               
             await _unitOfWork.Pedidos.AdicionarAsync(pedido);
             await _unitOfWork.SaveAsync();
-
             return true;
         }
 

@@ -18,6 +18,8 @@ namespace DroneDelivery.Domain.Entidades
         public Guid? DroneId { get; set; }
         public Drone Drone { get; set; }
 
+
+
         protected Pedido() { }
 
         public Pedido(double peso, DateTime dataPedido, double latitude, double longitude, PedidoStatus status)
@@ -56,6 +58,28 @@ namespace DroneDelivery.Domain.Entidades
             return true;
         }
 
+
+        public double RestanteAutonomia(double latitudeInicial, double longitudeInicial, double velocidadeDrone, double autonomiaDrone)
+        {
+            double distance = GeoCalculator.GetDistance(latitudeInicial, longitudeInicial, Latitude, Longitude, 1, DistanceUnit.Meters);
+            if (distance <= 0)
+                return 0;
+           
+            distance = autonomiaDrone -(((distance * 2) / velocidadeDrone) / 60);
+
+            if (distance > autonomiaDrone)
+                return autonomiaDrone;
+
+            return distance;
+
+                   
+        }
+
+        public bool RestantePeso(double PesoIntinerante)
+        {
+            return (Peso + PesoIntinerante)/1000 < Utility.Utils.CARGA_MAXIMA;
+
+        }
 
 
     }

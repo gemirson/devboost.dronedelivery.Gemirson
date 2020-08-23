@@ -1,6 +1,9 @@
 ﻿using DroneDelivery.Domain.Core;
 using DroneDelivery.Domain.Enum;
+using DroneDelivery.Domain.Helpers;
 using System;
+using Geolocation;
+using DroneDelivery.Utility;
 
 namespace DroneDelivery.Domain.Entidades
 {
@@ -52,5 +55,21 @@ namespace DroneDelivery.Domain.Entidades
         {
             return Capacidade > pesoPedido * 1000;
         }
+
+        public bool TraceRotaDrone(Localizacao inicio, Localizacao fim, double autonomia) {
+           
+
+            double trecho_inicio = GeoCalculator.GetDistance(inicio.Latitude, inicio.Longitude,Utils.LATITUDE_INICIAL, Utils.LONGITUDE_INICIAL , 1, DistanceUnit.Meters);
+
+            double trecho_fim = GeoCalculator.GetDistance(fim.Latitude, fim.Longitude, Utils.LATITUDE_INICIAL, Utils.LONGITUDE_INICIAL , 1, DistanceUnit.Meters);
+
+            double autonomiaTotal = (trecho_inicio - trecho_fim)/(Velocidade*60);
+
+            if (autonomiaTotal <= autonomia) return true;
+            return false;
+
+
+        }
+               
     }
 }

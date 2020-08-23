@@ -65,6 +65,8 @@ namespace DroneDelivery.Api
 
             services.AddScoped<IDroneRepository, DroneRepository>();
             services.AddScoped<IPedidoRepository, PedidoRepository>();
+            services.AddScoped<IIntinerarioRepository, IntinerarioRepository>();
+
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }

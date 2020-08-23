@@ -10,4 +10,8 @@
     <PackageReference Include="Geolocation.NetStandard" Version="1.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DroneDelivery.Utility\DroneDelivery.Utility.csproj" />
+  </ItemGroup>
+
 </Project>

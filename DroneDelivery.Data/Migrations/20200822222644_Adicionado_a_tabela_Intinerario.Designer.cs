@@ -4,14 +4,16 @@ using DroneDelivery.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DroneDelivery.Data.Migrations
 {
     [DbContext(typeof(DroneDbContext))]
-    partial class DroneDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200822222644_Adicionado_a_tabela_Intinerario")]
+    partial class Adicionado_a_tabela_Intinerario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

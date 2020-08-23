@@ -33,6 +33,11 @@ namespace DroneDelivery.Data.Repositorios
             return await _context.Drones.FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<Drone> AtualizarAsync()
+        {
+            return await _context.Drones.FirstOrDefaultAsync(x => x.Status == Domain.Enum.DroneStatus.EmCheckout || x.Status == Domain.Enum.DroneStatus.EmAguardandoNovo);
+        }
+
         public async Task RemoverAsync(Guid id)
         {
             var drone = await _context.Drones.FirstOrDefaultAsync(x => x.Id == id);

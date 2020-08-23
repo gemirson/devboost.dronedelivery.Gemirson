@@ -7,8 +7,8 @@ namespace DroneDelivery.Data.Repositorios.IRepository
     public interface IUnitOfWork : IDisposable
     {
         IPedidoRepository Pedidos { get; }
-
         IDroneRepository Drones { get; }
+        IIntinerarioRepository Intinerarios { get; }
         Task SaveAsync();
 
     }

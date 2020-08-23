@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DroneDelivery.Domain\DroneDelivery.Domain.csproj" />
+    <ProjectReference Include="..\DroneDelivery.Utility\DroneDelivery.Utility.csproj" />
   </ItemGroup>
 
 </Project>
